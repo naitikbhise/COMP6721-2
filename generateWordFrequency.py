@@ -12,7 +12,6 @@ def updateDictWords(dict_words, listOfTokens, postClass, AllClasses):
     return dict_words
 
 def getWordFrequencyDataframe(df,AllClasses):
-    # Each Token is a column
     dict_words = {}
     for index in range(len(df)):
         listOfTokens = df['tokenized_title'][index]
@@ -36,24 +35,3 @@ def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClass
         df[condClsLab] = df[className].map(lambda x: (int(x) + delta)/( wordsPerClass + delta*uniqueWords ))
     df = df.transpose()
     return df, absentWordCondProb
-
-
-def addDoubleSpacetoFile(filename):
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-    lines = [line.replace(' ', '  ') for line in lines]
-    with open(filename, 'w') as f:
-        f.writelines(lines)   
-
-def writeModel(df,orderedColumns,filename):
-    write_df = df.copy()
-    write_df = write_df.transpose()
-    write_df.index.name = 'TokenName'
-    write_df = write_df.reset_index()
-    write_df = write_df.sort_values(by ='TokenName')
-    write_df = write_df.reset_index()    
-    cols = ['TokenName'] + orderedColumns
-    write_df = write_df[cols]
-    write_df.index += 1
-    write_df.to_csv(filename, header = None, index = True, sep = ' ', mode = 'w')
-    addDoubleSpacetoFile(filename)
