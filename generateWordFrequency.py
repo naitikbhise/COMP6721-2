@@ -27,11 +27,9 @@ def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClass
     df = old_df.copy()
     df = df.transpose()
     uniqueWords = len(df)
-    absentWordCondProb = {}
     for className in AllClasses:
         wordsPerClass = np.sum(df[className])
         condClsLab = appendClassPrefix + className
-        absentWordCondProb[condClsLab] = delta/( wordsPerClass + delta*uniqueWords )
         df[condClsLab] = df[className].map(lambda x: (int(x) + delta)/( wordsPerClass + delta*uniqueWords ))
     df = df.transpose()
-    return df, absentWordCondProb
+    return df

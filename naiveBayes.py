@@ -2,35 +2,32 @@ import numpy as np
 import pandas as pd
 import math
 
-def getConditionalProbability(word, className, df, noWordClassCondProb):
+def getConditionalProbability(word, className, wordClassCondProbDF):
     try:
-        return df[word][className]
+        return wordClassCondProbDF[word][className]
     except:
-        return noWordClassCondProb[className]
+        return 1
         
-def getSentenceCondProb(wordsList, className, df, noWordClassCondProb, priorProbabilities):
+def getSentenceCondProb(wordsList, className, model):
+    wordClassCondProbDF = model[0]
+    priorProbabilities = model[1]
     score = math.log10(priorProbabilities[className])
     for word in wordsList:
-        score += math.log10(getConditionalProbability(word, className, df, noWordClassCondProb))
+        score += math.log10(getConditionalProbability(word, className, wordClassCondProbDF))
     return score
 
-def getListOfSentenceCondProb(arrayOfTokenizedTitle, className, df, noWordClassCondProb, priorProbabilities):
+def getListOfSentenceCondProb(arrayOfTokenizedTitle, className, model):
     score = np.zeros(len(arrayOfTokenizedTitle))
     for index in range(len(score)):
         wordsList = arrayOfTokenizedTitle[index]
-        score[index] = getSentenceCondProb(wordsList, className, df, noWordClassCondProb, priorProbabilities)
+        score[index] = getSentenceCondProb(wordsList, className, model)
     return score
 
 
-def generateCondClassProb(test_df, model, noWordClassCondProb):
-    model_df = model[0]
+def generateCondClassProb(test_df, model):
     priorProbabilities = model[1]
-    for className in noWordClassCondProb.keys():
-        test_df[className] = getListOfSentenceCondProb(test_df['tokenized_title'], 
-                                                       className, 
-                                                       model_df, 
-                                                       noWordClassCondProb,
-                                                       priorProbabilities)
+    for className in priorProbabilities.keys():
+        test_df[className] = getListOfSentenceCondProb(test_df['tokenized_title'],className,model)
     return test_df
 
 def comparePredictions(old_df,AllClasses):
