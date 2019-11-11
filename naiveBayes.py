@@ -1,3 +1,4 @@
+from GenerateCorpusDataframe import *
 import numpy as np
 import pandas as pd
 import math
@@ -30,15 +31,18 @@ def generateCondClassProb(test_df, model):
         test_df[className] = getListOfSentenceCondProb(test_df['tokenized_title'],className,model)
     return test_df
 
-def comparePredictions(old_df,AllClasses):
-    columnNamesExchange = {}
-    for className in AllClasses:
-        columnNamesExchange['prob_' + className] = className
-    df = old_df[columnNamesExchange.keys()].copy()
-    df = df.rename(columns=columnNamesExchange)
-    df['predicted'] = df.idxmax(axis=1)
-    df = pd.concat([df, old_df[['Title', 'Post Type']]], axis=1)
-    df['comparision'] = (df['predicted'] == old_df['Post Type'])
+def generatePrediction(old_df,AllClasses):
+    df = old_df[AllClasses].copy()
+    return df.idxmax(axis=1)
+
+def comparePredictions(df,AllClasses):
+    df['comparision'] = (df['predicted'] == df['Post Type'])
     cols = ['Title', 'predicted'] + AllClasses + ['Post Type', 'comparision']
     df = df[cols]
     return df
+
+def getRandomSentencePrediction(sentence,model):
+    df = pd.DataFrame(data = {'Title' : [sentence]})
+    df = addTokenizedColumnofTitle(df)
+    df = generateCondClassProb(df, model)
+    return generatePrediction(df,model[1].keys())[0]

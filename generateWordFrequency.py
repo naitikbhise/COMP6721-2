@@ -33,3 +33,12 @@ def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClass
         df[condClsLab] = df[className].map(lambda x: (int(x) + delta)/( wordsPerClass + delta*uniqueWords ))
     df = df.transpose()
     return df
+
+def renameModelRows(df, AllClasses, appendClassPrefix):
+    columnNamesExchange = {}
+    for className in AllClasses:
+        columnNamesExchange[appendClassPrefix + className] = className
+    df = df.transpose()[columnNamesExchange.keys()]
+    df = df.rename(columns=columnNamesExchange)
+    df = df.transpose()
+    return df

@@ -1,15 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import pandas as pd
 import re
-
-
-# In[ ]:
-
 
 def dater(datetim,integer):
     date,time = datetim.split(" ")
@@ -25,10 +15,6 @@ def dater(datetim,integer):
     else:
         return second
 
-
-# In[ ]:
-
-
 def getDataframe(year):
     data = pd.read_csv("hn2018_2019.csv")
     data["year"] = data['Created At'].map(lambda x: dater(x,1))
@@ -36,10 +22,6 @@ def getDataframe(year):
     data["day"] = data['Created At'].map(lambda x: dater(x,3))
     data["second"] = data['Created At'].map(lambda x: dater(x,4))
     return data[data["year"]==str(year)][['Title','Post Type','Number of Comments','Points','Author']].copy()
-
-
-# In[ ]:
-
 
 def addTokenizedColumnofTitle(data):
     data['tokenized_title'] = data['Title'].map(lambda x:re.split('\[\^a-zA-Z\]',x)[0].split())

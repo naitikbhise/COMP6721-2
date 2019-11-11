@@ -11,7 +11,11 @@ def writeDataframe(df,filename):
     df.to_csv(filename, header = None, index = True, sep = ' ', mode = 'w')
     addDoubleSpacetoFile(filename)
         
-def writeModel(df,orderedColumns,filename):
+def writeModel(df,filename,AllClasses,appendClassPrefix):
+    orderedColumns = []
+    for word in AllClasses:
+        orderedColumns.append(word)
+        orderedColumns.append(appendClassPrefix+word)
     write_df = df.copy()
     write_df = write_df.transpose()
     write_df.index.name = 'TokenName'
