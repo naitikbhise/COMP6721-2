@@ -1,5 +1,8 @@
 import pandas as pd
 import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+from nltk.corpus import wordnet as wn
 
 def dater(datetim,integer):
     date,time = datetim.split(" ")
