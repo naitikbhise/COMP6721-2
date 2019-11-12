@@ -1,5 +1,5 @@
 import pandas as pd
-import re
+import nltk
 
 def dater(datetim,integer):
     date,time = datetim.split(" ")
@@ -24,6 +24,6 @@ def getDataframe(year):
     return data[data["year"]==str(year)][['Title','Post Type','Number of Comments','Points','Author']].copy()
 
 def addTokenizedColumnofTitle(data):
-    data['tokenized_title'] = data['Title'].map(lambda x:re.split('\[\^a-zA-Z\]',x)[0].split())
+    data['tokenized_title'] = data['Title'].map(lambda x:nltk.word_tokenize(x.lower()))
     return data
 
