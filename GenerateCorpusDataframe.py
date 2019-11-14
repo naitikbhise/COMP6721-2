@@ -3,6 +3,7 @@ import nltk
 nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 from nltk.corpus import wordnet as wn
+wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
 
 def dater(datetim,integer):
     date,time = datetim.split(" ")
@@ -50,10 +51,11 @@ def penn_to_wn(tag):
     return None
 
 def sentence_split(sentence):
-    text = nltk.word_tokenize(sentence)
+    text = [x for x in nltk.word_tokenize(sentence) if x.isalpha()]
     pos_text = nltk.pos_tag(text)
     new_text = []
     grab = False
+    lemmatizedWord = None
     for word,pos in pos_text:
         #print(word)
         #print(pos)
