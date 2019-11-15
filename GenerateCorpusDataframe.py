@@ -51,7 +51,7 @@ def penn_to_wn(tag):
     return None
 
 def sentence_split(sentence):
-    text = [x for x in nltk.word_tokenize(sentence) if x.isalpha()]
+    text = nltk.word_tokenize(sentence)
     pos_text = nltk.pos_tag(text)
     new_text = []
     grab = False
@@ -64,7 +64,7 @@ def sentence_split(sentence):
             grab = False
             #print(word)
             lemmatizedWord += " " + wordnet_lemmatizer.lemmatize(word,tag)
-            new_text.append(lemmatizedWord)
+            new_text.append(lemmatizedWord.lower())
             lemmatizedWord = None
         elif pos == 'NNP' and grab == False:
             lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
@@ -72,12 +72,15 @@ def sentence_split(sentence):
             #print(grab)
         elif pos != 'NNP':
             if lemmatizedWord:
-                new_text.append(lemmatizedWord)
+                if lemmatizedWord.isalpha():
+                    new_text.append(lemmatizedWord.lower())
             if tag is None:
                 lemmatizedWord = word
             else:
                 lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
-            new_text.append(lemmatizedWord)
+            if lemmatizedWord.isalpha() or pos=='JJ':
+                if word.isalpha():
+                    new_text.append(lemmatizedWord.lower())
             lemmatizedWord = None
             grab = False
     return new_text

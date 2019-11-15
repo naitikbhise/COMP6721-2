@@ -3,12 +3,13 @@ import pandas as pd
 def addDoubleSpacetoFile(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
-    lines = [line.replace(' ', '  ') for line in lines]
+    #lines = [line.replace(' ', '  ') for line in lines]
+    
     with open(filename, 'w') as f:
         f.writelines(lines) 
         
 def writeDataframe(df,filename):
-    df.to_csv(filename, header = None, index = True, sep = ' ', mode = 'w')
+    df.to_csv(filename, header = None, index = True, sep = '  ', mode = 'w')
     addDoubleSpacetoFile(filename)
         
 def writeModel(df,filename,AllClasses,appendClassPrefix):
