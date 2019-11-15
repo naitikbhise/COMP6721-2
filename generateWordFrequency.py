@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import math
 
 def updateDictWords(dict_words, listOfTokens, postClass, AllClasses):
     for token in listOfTokens:
@@ -22,7 +22,12 @@ def getWordFrequencyDataframe(df,AllClasses):
 def getTotalWordCount(wordsFrequencyDataframe):
     return np.sum(wordsFrequencyDataframe.sum(axis = 1, skipna = True)) 
 
-
+def convertProbToLog(probabilityVector):
+    logVector = []
+    for probability in probabilityVector:
+        logProbability = math.log10(probability)
+        logVector.append(math.floor(logProbability*10**10)/10**10)
+    return logVector
 def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClassPrefix = 'prob_'):
     df = old_df.copy()
     df = df.transpose()
@@ -30,7 +35,8 @@ def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClass
     for className in AllClasses:
         wordsPerClass = np.sum(df[className])
         condClsLab = appendClassPrefix + className
-        df[condClsLab] = df[className].map(lambda x: (int(x) + delta)/( wordsPerClass + delta*uniqueWords ))
+        probabilityVector = df[className].map(lambda x: (int(x) + delta)/( wordsPerClass + delta*uniqueWords ))
+        df[condClsLab] =  convertProbToLog(probabilityVector)
     df = df.transpose()
     return df
 

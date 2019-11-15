@@ -14,7 +14,7 @@ def getSentenceCondProb(wordsList, className, model):
     priorProbabilities = model[1]
     score = math.log10(priorProbabilities[className])
     for word in wordsList:
-        score += math.log10(getConditionalProbability(word, className, wordClassCondProbDF))
+        score += getConditionalProbability(word, className, wordClassCondProbDF)
     return score
 
 def getListOfSentenceCondProb(arrayOfTokenizedTitle, className, model):
