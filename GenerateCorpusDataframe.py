@@ -47,6 +47,7 @@ def penn_to_wn(tag):
         return nltk_wn_pos[tag[0]]
     except:
         return None
+
 def checkPunctuation(word):
     punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
                 ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
@@ -54,15 +55,30 @@ def checkPunctuation(word):
         return True
     else:
         return False
-def tokenizeSentence(sentence,stopWords=None,filterByLength=False):
+
+def checkStopWords(word,stopWordSet):
+    if stopWordSet is None:
+        return False
+    if word in stopWordSet:
+        return True
+    else:
+        return False
+#    if StopWordsDF is None:
+#        return False
+#    try:
+#        a = StopWordsDF[word]
+#        return True
+#    except:
+#        return False
+    
+def tokenizeSentence(sentence,stopWordSet=None,filterByLength=False):
     tokenized = []
     text = nltk.word_tokenize(sentence.lower())
     for word,pos in nltk.pos_tag(text):
         if checkPunctuation(word):
             continue
-        if stopWords is not None:
-            if word in stopWords:
-                continue
+        if checkStopWords(word,stopWordSet):
+            continue    
         if filterByLength:
             if len(word)<=2 or len(word)>=9:
                 continue
@@ -74,8 +90,15 @@ def tokenizeSentence(sentence,stopWords=None,filterByLength=False):
         tokenized.append(lemmatizedWord)
     return tokenized
 
-def addTokenizedColumnofTitle(data,stopWords=None,filterByLength=False):
-    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWords,filterByLength))
+def addTokenizedColumnofTitle(data,stopWordList=None,filterByLength=False):
+    #StopWordsDF = None
+    stopWordSet = None
+    if stopWordList is not None:
+        stopWordSet = set(stopWordList)
+        #StopWordsDF = pd.DataFrame(np.zeros((1,len(stopWords))), columns=stopWords)    
+    if 'tokenized_title' in data:
+        data = data.drop('tokenized_title', 1)
+    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWordSet,filterByLength))
     return data
 
 def getPriorProbabilities(df):
