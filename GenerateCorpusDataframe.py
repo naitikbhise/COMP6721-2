@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 import nltk
 try:
@@ -53,12 +54,15 @@ def checkPunctuation(word):
         return True
     else:
         return False
-def tokenizeSentence(sentence):
+def tokenizeSentence(sentence,stopWords=None):
     tokenized = []
     text = nltk.word_tokenize(sentence.lower())
     for word,pos in nltk.pos_tag(text):
         if checkPunctuation(word):
             continue
+        if stopWords is not None:
+            if word in stopWords:
+                continue
         tag = penn_to_wn(pos)
         if tag is None:
             lemmatizedWord = word
@@ -67,7 +71,17 @@ def tokenizeSentence(sentence):
         tokenized.append(lemmatizedWord)
     return tokenized
 
-def addTokenizedColumnofTitle(data):
-    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x))
+def addTokenizedColumnofTitle(data,stopWords=None):
+    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWords))
     return data
 
+def getPriorProbabilities(df):
+    priorProbabilities = {}
+    classList = []
+    for index in range(len(df)):
+        if len(df['tokenized_title'][index]):
+            classList.append(df['Post Type'][index])
+    unique, counts = np.unique(classList, return_counts=True)
+    for index in range(len(unique)):
+        priorProbabilities[unique[index]] = counts[index]/np.sum(counts)
+    return priorProbabilities
