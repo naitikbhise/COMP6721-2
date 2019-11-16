@@ -54,7 +54,7 @@ def checkPunctuation(word):
         return True
     else:
         return False
-def tokenizeSentence(sentence,stopWords=None):
+def tokenizeSentence(sentence,stopWords=None,filterByLength=False):
     tokenized = []
     text = nltk.word_tokenize(sentence.lower())
     for word,pos in nltk.pos_tag(text):
@@ -62,6 +62,9 @@ def tokenizeSentence(sentence,stopWords=None):
             continue
         if stopWords is not None:
             if word in stopWords:
+                continue
+        if filterByLength:
+            if len(word)<=2 or len(word)>=9:
                 continue
         tag = penn_to_wn(pos)
         if tag is None:
@@ -71,8 +74,8 @@ def tokenizeSentence(sentence,stopWords=None):
         tokenized.append(lemmatizedWord)
     return tokenized
 
-def addTokenizedColumnofTitle(data,stopWords=None):
-    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWords))
+def addTokenizedColumnofTitle(data,stopWords=None,filterByLength=False):
+    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWords,filterByLength))
     return data
 
 def getPriorProbabilities(df):
