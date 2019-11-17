@@ -48,3 +48,23 @@ def renameModelRows(df, AllClasses, appendClassPrefix):
     df = df.rename(columns=columnNamesExchange)
     df = df.transpose()
     return df
+
+def getWordListBasedOnCount(words_df,maxCount = 1):
+    wordList = []
+    for word in list(words_df.columns.values):
+        count = np.sum(words_df[word])
+        if count <= maxCount:
+            wordList.append(word)
+    return wordList
+
+def getWordListBasedOnPercent(words_df,Percent = 25):
+    Counts = []
+    Words = []
+    for word in list(words_df.columns.values):
+        Counts.append(np.sum(words_df[word]))
+        Words.append(word)
+    df = pd.DataFrame({"Count": Counts, "Words":Words})
+    df = df.sort_values(by=['Count'], ascending=False)
+    SortedWords = df['Words'].values.tolist()
+    lastIndex = int(len(SortedWords)*(Percent/100))
+    return SortedWords[0:lastIndex]
