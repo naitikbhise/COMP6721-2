@@ -22,12 +22,20 @@ def getWordFrequencyDataframe(df,AllClasses):
 def getTotalWordCount(wordsFrequencyDataframe):
     return np.sum(wordsFrequencyDataframe.sum(axis = 1, skipna = True)) 
 
+def getLogOfProbability(probability):
+    if probability == 0:
+        logProbability = -1e5
+    else:
+        logProbability = math.log10(probability)
+        logProbability = math.floor(logProbability*10**10)/10**10
+    return logProbability
+
 def convertProbToLog(probabilityVector):
     logVector = []
     for probability in probabilityVector:
-        logProbability = math.log10(probability)
-        logVector.append(math.floor(logProbability*10**10)/10**10)
+        logVector.append(getLogOfProbability(probability))
     return logVector
+
 def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClassPrefix = 'prob_'):
     df = old_df.copy()
     df = df.transpose()
@@ -39,6 +47,18 @@ def obtainDataframeWithClassProbabilities(old_df, AllClasses, delta, appendClass
         df[condClsLab] =  convertProbToLog(probabilityVector)
     df = df.transpose()
     return df
+
+def getPriorProbabilities(df):
+    priorProbabilities = {}
+    classList = []
+    for index in range(len(df)):
+        if len(df['tokenized_title'][index]):
+            classList.append(df['Post Type'][index])
+    unique, counts = np.unique(classList, return_counts=True)
+    for index in range(len(unique)):
+        probability = counts[index]/np.sum(counts)
+        priorProbabilities[unique[index]] = getLogOfProbability(probability)
+    return priorProbabilities
 
 def renameModelRows(df, AllClasses, appendClassPrefix):
     columnNamesExchange = {}

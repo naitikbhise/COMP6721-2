@@ -1,7 +1,6 @@
 from GenerateCorpusDataframe import *
 import numpy as np
 import pandas as pd
-import math
 
 def getConditionalProbability(word, className, wordClassCondProbDF):
     try:
@@ -12,7 +11,7 @@ def getConditionalProbability(word, className, wordClassCondProbDF):
 def getSentenceCondProb(wordsList, className, model):
     wordClassCondProbDF = model[0]
     priorProbabilities = model[1]
-    score = math.log10(priorProbabilities[className])
+    score = priorProbabilities[className]
     for word in wordsList:
         score += getConditionalProbability(word, className, wordClassCondProbDF)
     return score
@@ -28,6 +27,8 @@ def getListOfSentenceCondProb(arrayOfTokenizedTitle, className, model):
 def generateCondClassProb(test_df, model):
     priorProbabilities = model[1]
     for className in priorProbabilities.keys():
+        if className in test_df.columns:
+            test_df = test_df.drop(className, 1)
         test_df[className] = getListOfSentenceCondProb(test_df['tokenized_title'],className,model)
     return test_df
 

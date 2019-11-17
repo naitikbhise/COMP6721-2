@@ -91,14 +91,3 @@ def addTokenizedColumnofTitle(data,stopWordList=None,filterByLength=False):
         data = data.drop('tokenized_title', 1)
     data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWordSet,filterByLength))
     return data
-
-def getPriorProbabilities(df):
-    priorProbabilities = {}
-    classList = []
-    for index in range(len(df)):
-        if len(df['tokenized_title'][index]):
-            classList.append(df['Post Type'][index])
-    unique, counts = np.unique(classList, return_counts=True)
-    for index in range(len(unique)):
-        priorProbabilities[unique[index]] = counts[index]/np.sum(counts)
-    return priorProbabilities
