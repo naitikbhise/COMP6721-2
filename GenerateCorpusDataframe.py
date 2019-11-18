@@ -57,37 +57,58 @@ def checkPunctuation(word):
         return False
 
 def checkStopWords(word,stopWordSet):
-    if stopWordSet is None:
-        return False
     if word in stopWordSet:
         return True
     else:
         return False
     
-def tokenizeSentence(sentence,stopWordSet=None,filterByLength=False):
+def tokenizeSentence(sentence):
     tokenized = []
     text = nltk.word_tokenize(sentence.lower())
     for word,pos in nltk.pos_tag(text):
         if checkPunctuation(word):
             continue    
-        if filterByLength:
-            if len(word)<=2 or len(word)>=9:
-                continue
         tag = penn_to_wn(pos)
         if tag is None:
             lemmatizedWord = word
         else:
             lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
-        if checkStopWords(lemmatizedWord,stopWordSet):
-            continue            
         tokenized.append(lemmatizedWord)
     return tokenized
 
-def addTokenizedColumnofTitle(data,stopWordList=None,filterByLength=False):
-    stopWordSet = None
-    if stopWordList is not None:
-        stopWordSet = set(stopWordList)
+def addTokenizedColumnofTitle(data):
     if 'tokenized_title' in data.columns:
         data = data.drop('tokenized_title', 1)
-    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x,stopWordSet,filterByLength))
+    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x))
+    return data
+
+def filterByWordList(listOfTokens,stopWordSet):
+    filteredList = []
+    for token in listOfTokens:
+        if checkStopWords(token,stopWordSet):
+            continue            
+        filteredList.append(token)
+    return filteredList
+
+def filterTokensByWordList(data,stopWordList):
+    stopWordSet = set(stopWordList)
+    if 'tokenized_title' in data.columns:
+        data['tokenized_title'] = data['tokenized_title'].map(lambda x:filterByWordList(x,stopWordSet))
+    else:
+        return data
+    return data
+
+def filterByWordLength(listOfTokens):
+    filteredList = []
+    for token in listOfTokens:
+        if len(token)<=2 or len(token)>=9:
+            continue            
+        filteredList.append(token)
+    return filteredList
+
+def filterTokensByWordLength(data):
+    if 'tokenized_title' in data.columns:
+        data['tokenized_title'] = data['tokenized_title'].map(lambda x:filterByWordLength(x))
+    else:
+        return data
     return data
