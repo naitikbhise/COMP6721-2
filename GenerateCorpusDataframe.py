@@ -50,7 +50,7 @@ def penn_to_wn(tag):
 
 def checkPunctuation(word):
     punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
-                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~','’']
     if word in punctuations:
         return True
     else:
@@ -65,45 +65,33 @@ def checkStopWords(word,stopWordSet):
 def tokenizeSentence(sentence):
     tokenized = []
     text = nltk.word_tokenize(sentence)
+    grab = False
     for word,pos in nltk.pos_tag(text):
         if checkPunctuation(word):
-            continue    
+            continue
         tag = penn_to_wn(pos)
         if tag is None:
             lemmatizedWord = word
         else:
             lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
-        tokenized.append(lemmatizedWord)
-    return tokenized
-
-def sentence_split(sentence):
-    pos_text = nltk.pos_tag(sentence)
-    new_text = []
-    grab = False
-    #print(pos_text)
-    for word,pos in pos_text:
-        #Here we start with some initial signals for removing the importance of the texts. D'abord , we will start with 
-        if pos.isalpha()==False:
-            grab = False
-            continue
-        #Here we check whether the number is NNP. Si le numero l'es, on va cocher le feu de colle vert
+        lemmatizedWord = lemmatizedWord.lower()
         if pos=='NNP':
             if grab:
-                new_text[-1] += " "+word.lower()
+                tokenized[-1] += " " + lemmatizedWord
                 grab = False
                 continue
             else:
                 grab = True
         else:
             if grab:
-                grab= False
-        new_text.append(word.lower())
-    return new_text
+                grab = False
+        tokenized.append(lemmatizedWord)
+    return tokenized
 
 def addTokenizedColumnofTitle(data):
     if 'tokenized_title' in data.columns:
         data = data.drop('tokenized_title', 1)
-    data['tokenized_title'] = data['Title'].map(lambda x:sentence_split(tokenizeSentence(x)))
+    data['tokenized_title'] = data['Title'].map(lambda x:tokenizeSentence(x))
     return data
 
 def filterByWordList(listOfTokens,stopWordSet):
