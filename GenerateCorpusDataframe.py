@@ -1,23 +1,7 @@
 import pandas as pd
 import numpy as np
 
-import nltk
-try:
-    nltk.data.find('tokenizers/punkt')
-except:
-    nltk.download('punkt')
-try:
-    nltk.data.find('corpora/wordnet')
-except:
-    nltk.download('wordnet')
-try:
-    nltk.data.find('taggers/averaged_perceptron_tagger')
-except:
-    nltk.download('averaged_perceptron_tagger')
-
-from nltk.corpus import wordnet as wn
-wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
-
+from posTagger import *
 
 def dater(datetim,integer):
     date,time = datetim.split(" ")
@@ -41,20 +25,6 @@ def getDataframe(year):
     data["second"] = data['Created At'].map(lambda x: dater(x,4))
     return data[data["year"]==str(year)][['Title','Post Type','Number of Comments','Points','Author']].copy()
 
-def penn_to_wn(tag):
-    nltk_wn_pos = {'J':wn.ADJ,'V':wn.VERB,'N':wn.NOUN,'R':wn.ADV}
-    try:
-        return nltk_wn_pos[tag[0]]
-    except:
-        return None
-
-def checkPunctuation(word):
-    punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
-                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~','’']
-    if word in punctuations:
-        return True
-    else:
-        return False
 
 def checkStopWords(word,stopWordSet):
     if word in stopWordSet:
@@ -62,32 +32,6 @@ def checkStopWords(word,stopWordSet):
     else:
         return False
     
-def tokenizeSentence(sentence):
-    tokenized = []
-    text = nltk.word_tokenize(sentence)
-    grab = False
-    for word,pos in nltk.pos_tag(text):
-        if checkPunctuation(word):
-            continue
-        tag = penn_to_wn(pos)
-        if tag is None:
-            lemmatizedWord = word
-        else:
-            lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
-        lemmatizedWord = lemmatizedWord.lower()
-        if pos=='NNP':
-            if grab:
-                tokenized[-1] += " " + lemmatizedWord
-                grab = False
-                continue
-            else:
-                grab = True
-        else:
-            if grab:
-                grab = False
-        tokenized.append(lemmatizedWord)
-    return tokenized
-
 def addTokenizedColumnofTitle(data):
     if 'tokenized_title' in data.columns:
         data = data.drop('tokenized_title', 1)
