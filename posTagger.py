@@ -48,45 +48,37 @@ def penn_to_wn(tag):
     except:
         return None
     
-
-def skipUnwantedTokens(token):
-    punctuations = ['!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',
-                ':', ';', '<', '=', '>', '?', '@', '[',  ']', '^', '_', '`', '{', '|','}','~','’']
-    if token in punctuations:
-        return True
-    else:
-        return False
-
 def filterUnwantedCharacters(tokenList):
     NewList = []
+    unwanted_chars = ['"','!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
+                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
     for token in tokenList:
-        if token in ["'s","'-","''",'\\',]:
+        if token in unwanted_chars:
             continue
-        editedToken = ''
-        for char in token:
-            if skipUnwantedTokens(char):
+        if token[0] in unwanted_chars:
+            size = len(token)
+            if size == 1:
                 continue
-            editedToken += char
-        if len(editedToken):
-            NewList.append(editedToken)
+            token = token[1:]
+        NewList.append(token)
     return NewList
 
 def tokenizeSentence(sentence):
-    #sentence = sentence.lower()
+    sentence = sentence.lower()
     tokenized = []
     text = nltk.word_tokenize(sentence)
     text = filterUnwantedCharacters(text)
     grab = False
-    #for word,pos in et2.tag(text):
-    for word,pos in nltk.pos_tag(text):
+    for word,pos in et2.tag(text):
+    #for word,pos in nltk.pos_tag(text):
         tag = penn_to_wn(pos)
         if tag is None:
             lemmatizedWord = word
         else:
             lemmatizedWord = wordnet_lemmatizer.lemmatize(word,tag)
         lemmatizedWord = lemmatizedWord.lower()
-        #if pos=='NN' or pos=='NNS':
-        if pos=='NNP':    
+        if pos=='NN' or pos=='NNS':
+        #if pos=='NNP':    
             if grab:
                 tokenized[-1] += " " + lemmatizedWord
                 grab = False
