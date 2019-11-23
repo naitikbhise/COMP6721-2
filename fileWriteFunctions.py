@@ -27,3 +27,8 @@ def writeModel(df,filename,AllClasses,appendClassPrefix):
     write_df = write_df[cols]
     write_df.index += 1
     writeDataframe(write_df,filename)
+
+def WriteList(my_list,filename):
+    with open(filename, 'w') as f:
+        for item in my_list:
+            f.write("%s\n" % item)

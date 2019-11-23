@@ -47,15 +47,18 @@ def penn_to_wn(tag):
         return nltk_wn_pos[tag[0]]
     except:
         return None
-    
+
+
+unwanted_tokens = ['"','!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
+                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~'] 
+
 def filterUnwantedCharacters(tokenList):
     NewList = []
-    unwanted_chars = ['"','!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
-                ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~']
+
     for token in tokenList:
-        if token in unwanted_chars:
+        if token in unwanted_tokens:
             continue
-        if token[0] in unwanted_chars:
+        if token[0] in unwanted_tokens:
             size = len(token)
             if size == 1:
                 continue
