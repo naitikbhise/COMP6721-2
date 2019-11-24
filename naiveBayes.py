@@ -6,7 +6,7 @@ def getConditionalProbability(word, className, wordClassCondProbDF):
     try:
         return wordClassCondProbDF[word][className]
     except:
-        return 1
+        return 0
         
 def getSentenceCondProb(wordsList, className, model):
     wordClassCondProbDF = model[0]
