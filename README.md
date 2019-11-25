@@ -2,7 +2,8 @@
 ## Written by Naitik Bhise (40106507) and Paras Kapoor (40114178)
 ## For COMP 6721 Section FI – Fall 2019
 
-Requirements : Libraries required for the successful running of the project along with their versions are mentioned in the requirements.txt. In order to install these dependencies, run the terminal command : # pip install requirements.txt
+Requirements : Libraries required for the successful running of the project along with their versions are mentioned in the requirements.txt file. In order to install these dependencies, run the terminal command : pip install requirements.txt
+
 Instructions to use all the scripts are given below : 
 
 1. Main Project :
