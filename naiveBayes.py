@@ -1,6 +1,10 @@
+# -------------------------------------------------------
+# Project #2 Hacker News Dataset Analysis
+# Written by Naitik Bhise (40106507) and Paras Kapoor (40114178)
+# For COMP 6721 Section FI – Fall 2019
+# --------------------------------------------------------
+
 from GenerateCorpusDataframe import *
-import numpy as np
-import pandas as pd
 
 def getConditionalProbability(word, className, wordClassCondProbDF):
     try:

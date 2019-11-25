@@ -1,3 +1,9 @@
+# -------------------------------------------------------
+# Project #2 Hacker News Dataset Analysis
+# Written by Naitik Bhise (40106507) and Paras Kapoor (40114178)
+# For COMP 6721 Section FI – Fall 2019
+# --------------------------------------------------------
+
 import nltk
 try:
     nltk.data.find('tokenizers/punkt')
@@ -29,10 +35,11 @@ except:
     nltk.download('averaged_perceptron_tagger')
 
 from nltk.corpus import wordnet as wn
-wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
-
 from nltk.corpus import treebank, conll2000, brown, conll2002
 from nltk import DefaultTagger, UnigramTagger, BigramTagger
+
+wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
+
 train_sents = treebank.tagged_sents() + brown.tagged_sents() + conll2000.tagged_sents() + conll2002.tagged_sents()
 edited_train = []
 for sent in train_sents:
