@@ -17,8 +17,8 @@ def dater(datetim,integer):
     else:
         return second
 
-def getDataframe(year):
-    data = pd.read_csv("hn2018_2019.csv")
+def getDataframe(year,filename):
+    data = pd.read_csv(filename)
     data["year"] = data['Created At'].map(lambda x: dater(x,1))
     data["month"] = data['Created At'].map(lambda x: dater(x,2))
     data["day"] = data['Created At'].map(lambda x: dater(x,3))
