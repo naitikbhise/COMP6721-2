@@ -40,6 +40,7 @@ from nltk import DefaultTagger, UnigramTagger, BigramTagger
 
 wordnet_lemmatizer = nltk.stem.WordNetLemmatizer()
 
+# The code below trains bigram part of speech tagger from various datasets.
 train_sents = treebank.tagged_sents() + brown.tagged_sents() + conll2000.tagged_sents() + conll2002.tagged_sents()
 edited_train = []
 for sent in train_sents:
@@ -48,6 +49,7 @@ t0 = DefaultTagger(None)
 et1 = UnigramTagger(edited_train, backoff = t0)
 et2 = BigramTagger(edited_train, backoff = et1)
 
+# The function below converts bigram pos to wordnet pos for lemmatization
 def penn_to_wn(tag):
     nltk_wn_pos = {'J':wn.ADJ,'V':wn.VERB,'N':wn.NOUN,'R':wn.ADV}
     try:
@@ -55,10 +57,11 @@ def penn_to_wn(tag):
     except:
         return None
 
-
+# The list below is a list of unwanted tokens
 unwanted_tokens = ['"','!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/','”','“','–',"'s",
                 ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~'] 
 
+# The function below filters unwanted tokens from the given tokenList
 def filterUnwantedCharacters(tokenList):
     NewList = []
 
@@ -73,6 +76,7 @@ def filterUnwantedCharacters(tokenList):
         NewList.append(token)
     return NewList
 
+# The function below generates lemmatized tokens from given input sentence
 def tokenizeSentence(sentence):
     sentence = sentence.lower()
     tokenized = []
